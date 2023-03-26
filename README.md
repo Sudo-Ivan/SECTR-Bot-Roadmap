@@ -1,3 +1,5 @@
+![logo](https://github.com/Sudo-Ivan/MyWebsite-Assets/blob/main/images/bots/SECTR/sectrlogo.svg)
+
 # SECTR Bot Roadmap 
 
 This repository is used for tracking SECTR Bot issues, features and users may also request features here.
