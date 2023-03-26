@@ -1,5 +1,7 @@
 # SECTR Bot Roadmap 
 
+This repository is used for tracking SECTR Bot issues, features and users may also request features here.
+
 ## Overview
 
 The SECTR Bot is a Discord bot that is designed to integrate with various different AI technologies, specifically SECTR platform and SECTR AI to provide intelligence capabilties using OSINT and other data sources.
