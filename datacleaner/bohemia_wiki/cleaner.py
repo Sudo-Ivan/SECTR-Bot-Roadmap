@@ -15,11 +15,6 @@ def extract_sections(lines):
         sections.append('\n'.join(current_section))
     return sections
 
-def clean_special_characters(text):
-    text = re.sub(r'#', '', text)  # Remove '#'
-    text = re.sub(r'\{\{(.+?)\}\}', '', text)  # Remove '{{ }}'
-    return text
-
 def txt_to_csv(input_file, output_file):
     with open(input_file, 'r') as f:
         lines = f.readlines()
@@ -37,7 +32,6 @@ def txt_to_csv(input_file, output_file):
             title = 'Untitled'
         
         content = re.sub(r'^==(.+)==$', '', section, flags=re.MULTILINE).strip()
-        content = clean_special_characters(content)
         data.append([title, content])
 
     df = pd.DataFrame(data, columns=['Title', 'Content'])
