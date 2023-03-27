@@ -1,0 +1,251 @@
+Array properties
+
+An array variable is a reference to the array (see Wikipedia reference page); this means that if the array is edited, all the scripts/functions using a reference to this array will see the edition.
+private _myArray = ["a", "b", "c"];
+private _myNewArray = _myArray;
+_myArray set [1, "z"];
+_myNewArray select 1; // will be "z"
+
+An array set through setVariable does not need to be assigned again if you modify it by reference:
+player setVariable ["myArray", ["a", "b", "c"]];
+private _myArray = player getVariable "myArray";
+_myArray set [1, "z"];
+player getVariable "myArray"; // is ["a", "z", "c"]
+Create an array
+// Example of an empty array
+private _myArray = [];
+count _myArray;			// returns 0
+
+// Example of a filled array
+private _myFilledArray = ["abc", "def"];
+count _myFilledArray;	// returns 2
+
+An array can hold another array within it, that can hold another array itself, etc:
+private _myArray = [["my", "subArray", 1], ["mySubArray2"], [["my", "sub", "sub", "array"]]];
+count   _myArray;						// returns 3
+count  (_myArray select 0);				// returns 3
+count  (_myArray select 1);				// returns 1
+count  (_myArray select 2);				// returns 1
+count ((_myArray select 2) select 0);	// returns 4
+Getting an element
+
+An array uses a zero-based index for its elements:
+private _myArray = ["first item", "second item", "third item"];
+_myArray select 0;	// returns "first item"
+_myArray # 2;		// returns "third item" - Arma 3 only
+Setting an element
+private _myArray = ["first item", "second item", "third item"];
+_myArray select 1;					// returns "second item"
+_myArray set [1, "hello there"];	// _myArray is ["first item", "hello there", "third item"]
+⚠
+If the index given to the set command is out of bounds, the array will resize to incorporate the index as its last value. All the "empty spaces" between the last valid element and the new set element will be filled with nil
+Counting elements
+private _myArray = ["first item", ["second item's subitem 1", "second item's subitem 2"], "third item"];
+count _myArray; // returns 3 - arrays are not counted recursively
+Changing array size
+
+The resize command is made to reduce or expand an array:
+private _myArray = [1, 2, 3, 4, 5];
+_myArray resize 3; // _myArray is [1, 2, 3]
+private _myArray = [1, 2, 3];
+_myArray resize 5; // _myArray is [1, 2, 3, nil, nil]
+⚠
+You do not need to extend an array before adding elements!
+Array Copy
+private _myArray = ["a", "b", "c"];
+private _myNewArray = _myArray;
+_myArray set [1, "z"];
+_myNewArray select 1; // will be "z"
+private _myArray = [["a", "b", "c"], ["d", "e", "f"]];
+private _subArray1 = _myArray select 0;
+_subArray1 set [1, "z"];
+// _subArray1 is now ["a", "z", "c"]
+// _myArray is now [["a", "z", "c"], ["d", "e", "f"]]
+
+In order to avoid this behaviour, copy the array with + (plus):
+// making copy
+private _myArray = ["a", "b", "c"];
+private _myNewArray = +_myArray;
+_myArray set [1, "z"];
+_myNewArray select 1; // still "b"
+
+Sub-arrays are also deep-copied; _myNewArray will not point at the same sub-array instances.
+Adding (appending) elements
+
+In Arma 3 use append and pushBack commands:
+private _myArray = [1, 2, 3];
+_myArray pushBack 4;		// _myArray is [1, 2, 3, 4]
+_myArray append [5, 6];		// _myArray is [1, 2, 3, 4, 5, 6]
+
+You could also use (+) operator to add arrays. The difference is that addition returns a copy of array and thus a little slower than append and pushBack, which modify target array.
+private _myArray = [1, 2, 3];
+_myArray = _myArray + [4];		// _myArray is [1, 2, 3, 4]
+_myArray = _myArray + [5, 6];	// _myArray is [1, 2, 3, 4, 5, 6]
+Removing (deleting) elements
+
+In Arma 3 the deleteAt and deleteRange commands are available:
+private _myArray = [1, 2, 3, 4, 5];
+_myArray deleteAt 0; // _myArray is [2, 3, 4, 5]
+private _myArray = [1, 2, 3, 4, 5];
+_myArray deleteRange [1, 2];	// _myArray is [1, 4, 5]
+
+You can also use (-) operator to subtract arrays. The subtraction returns array copy, just like addition, and this not as fast as deleteAt and deleteRange which modify target arrays.
+private _myArray = [1, 2, 3, 4, 5];
+_myArray = _myArray - [1]; // _myArray is [2, 3, 4, 5]
+
+In Arma 3 it became possible to also subtract nested arrays:
+private _myArray = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+_myArray = _myArray - [[4, 5, 6]]; // _myArray is [[1, 2, 3], [7, 8, 9]]
+
+The subtraction will remove all elements of second array from the first array:
+_myArray = [1, 2, 3, 1, 2, 3] - [1, 2]; // _myArray is [3, 3]
+
+The solution to this issue is the combined use of set and an item that you know is not present in the array:
+private _myArray = [1, 2, 3, 1, 2, 3];
+_myArray set [2, objNull];			// _myArray is [1, 2, objNull, 1, 2, 3]]
+_myArray = _myArray - [objNull];	// _myArray is [1, 2, 1, 2, 3]
+
+Using this technique, it is possible to mimic deleteRange behaviour this way:
+private _myArray = [1, 2, 3, 4, 5];
+{ _myArray set [_x, objNull] } forEach [1, 2];	// _myArray is [1, objNull, objNull, 4, 5]
+_array = _array - [objNull];					// _myArray is [1, 4, 5]
+Going through the array
+
+The simplest way to iterate through an array is the forEach command:
+private _myArray = [1, 2, 3, 4, 5];
+{ systemChat str _x } forEach _myArray;
+
+A combination of for, count and select can also be used:
+private _myArray = [1, 2, 3, 4, 5];
+for "_i" from 0 to (count _myArray) -1 do { // count would return 5, but 5 is at array index 4
+	systemChat str (_myArray select _i);
+};
+
+
+Advanced usage
+apply
+
+Similar to the "map" function in Javascript, apply allows to apply code to every elements in an array and return a copy:
+private _myArray = [1, 2, 3, 4, 5];
+_myArray = _myArray apply { _x * 2 }; // _myArray is [2, 4, 6, 8, 10]
+
+// same as
+_myArray = + _myArray;
+for "_i" from 0 to count _myArray -1 do {
+	private _element = _myArray select _i;
+	_myArray set [_i, _element * 2];
+};
+select
+
+A simple way to filter an array (and obtain a new one) is using select's alternative syntax:
+private _myArray = [1, 2, 3, 4, 5];
+private _filteredArray = _myArray select { _x > 3 }; // _filteredArray is [4, 5]
+
+// same as
+private _filteredArray = [];
+{ if (_x > 3) then { _filteredArray pushBack _x } } forEach _myArray;
+findIf
+
+The findIf command was introduced in Arma 3 and allows you to go through the whole list and stop as soon as the condition is met, returning the condition-meeting element's array index:
+private _myArray = [1, 2, 3, 4, 5];
+_myArray findIf { _x == 3 } > -1; // returns true, meaning there is an element that equals 3
+_myArray findIf { _x == 6 } > -1; // returns false, meaning there is no element that is equal to 6
+
+You could use count to achieve the same result, however count won't stop until it iterated through the whole array, so it might take longer.
+private _myArray = [1, 2, 3, 4, 5];
+{ _x == 3 } count _myArray > 0; // returns true, meaning there is an element that equals 3
+{ _x == 6 } count _myArray > 0; // returns false, meaning there is no element that is equal to 6
+arrayIntersect
+
+The arrayIntersect command returns a new array filled with the items found in both provided lists:
+private _array1 = [1, 2, 3, 4];
+private _array2 = [3, 4, 5, 6];
+private _result = _array1 arrayIntersect _array2; // _result is [3, 4]
+
+You can remove duplicates (get unique items) with this command:
+private _myarray = [1, 2, 2, 3, 4];
+private _result = _myArray arrayIntersect _myArray; // _result is [1, 2, 3, 4]
+
+Be wary that nil elements get removed by this method:
+private _myarray = [1, 2, nil, 3, 4];
+private _result = _myArray arrayIntersect _myArray; // _result is [1, 2, 3, 4]
+Sorting an array
+sort
+
+The sort command allows for sorting an array of String, Number or sub-Arrays of string/number. It modifies the original array and does not return anything:
+private _myArray = ["zzz", "aaa", "ccc"];
+_myArray sort true; // _myArray is ["aaa", "ccc", "zzz"]
+private _myArray = [666, 57, 1024, 42];
+_myArray sort false; // _myArray is [1024, 666, 57, 42]
+private _myArray = [["zzz", 0], ["aaa", 42], ["ccc", 33]];
+_myArray sort true; // _myArray is [["aaa", 42], ["ccc", 33], ["zzz", 0]]
+reverse
+
+The reverse command simply reverses the array order:
+private _myArray = [99, 33, 17, 24, "a", [3,2,1], 7777];
+reverse _myArray; // _myArray is [7777, [3,2,1], "a", 24, 17, 33, 99]
+BIS_fnc_sortBy
+
+The function BIS_fnc_sortBy has been created for more complex sorting. Its algorithm input must return a number:
+private _closestHelicopters = [[_heli1, _heli2, _heli3], [], { player distance _x }, "ASCEND"] call BIS_fnc_sortBy;
+
+
+Common errors
+Index rounding
+
+In Arma scripts, indices are rounded to the nearest whole number. A boundary case (X.5, where X is any whole number) rounds to the nearest even whole number.
+
+Boundary cases
+
+    -0.5 <= index <= 0.5 rounds to 0
+     0.5 <  index <  1.5 rounds to 1
+     1.5 <= index <= 2.5 rounds to 2
+     2.5 <  index <  3.5 rounds to 3
+
+In short
+
+    -0.5 rounds up to 0
+     0.5 rounds down to 0
+     1.5 rounds up to 2
+     2.5 rounds down to 2
+     3.5 rounds up to 4
+
+etc.
+Index out of Range
+
+The following code lists Arma 3 behaviour on wrong indices:
+private _myArray = ["element0"];
+_myArray select -1; // throws a Error Zero Divisor error message
+_myArray select  0; // returns "element0"
+_myArray select  1; // returns nil
+_myArray select  2; // throws a Error Zero Divisor error message
+param
+
+Use the param command in order to avoid out of range error:
+private _myArray = [0,1,2];
+_myArray select 5;			// error: out of range
+_myArray param [5];			// returns nil
+_myArray param [5, "abc"];	// returns default value "abc" on invalid index
+set
+
+If the index given to the set command is out of bounds:
+
+    If the index rounded to a negative number, then an Error Zero Divisor message will be displayed in game.
+    If the index rounded to a positive number, then the array will resize to incorporate the index as its last value. Each element between the last valid element, and the new set element, will be the null type
+
+Bad syntax
+// Error: Unexpected ","
+private _myErroneousArray = ["Weapon1", "Weapon2", "Weapon3",]; // The last element in an array must not end by ","
+Un-modifiable
+
+If the array is considered "Un-modifiable" such as select arrays that are returned from an addon, and some undiscovered returns, it will return a Error: Reserved variable in expression upon trying to modify it.
+
+To combat this, copy an array with the + prefix before modifying.
+// Error: Reserved variable in expression
+_arr = [1,2,3];
+_arr set [1,"test"]; // May error if previous array was un-modifiable
+
+// No Error
+_arr = [4,5,6];
+_arr = +_arr; // Copy the array instead of using a reference
+_arr set [1,"test"]; // Will not error even if previous array is not modifiable
