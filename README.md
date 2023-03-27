@@ -22,7 +22,9 @@ The current bot version 1.0 can use openAI, Google Search API, DeepL, and DALLE.
 - Added SECTR Platform API early integration
 - Modified the bot to meet standards
 
-**Upcoming modifications include:**
+Check the project board at: https://github.com/users/Sudo-Ivan/projects/6
+
+**Some Upcoming modifications include:**
 
 - [ ] Basic OSINT Integrations
 - [ ] GPT-J API Integration
