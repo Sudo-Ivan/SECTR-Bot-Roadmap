@@ -4,11 +4,13 @@ This repository is used for tracking SECTR Bot issues, features and users may al
 
 ## Overview
 
-The SECTR Bot is a Discord bot that is designed to integrate with various different AI technologies, specifically SECTR platform and SECTR AI to provide intelligence capabilties using OSINT and other data sources.
+The SECTR Agent Genesis is a Discord bot that is designed to integrate with various different AI technologies, specifically SECTR platform and SECTR AI to provide intelligence capabilties using OSINT and other data sources.
 
 The SECTR Advanced Intelligence Platform is built on a highly scalable architecture that can handle massive volumes of data, making it suitable for large-scale intelligence operations using OSINT. It utilizes advanced algorithms, machine learning techniques, and state-of-the-art technologies to automate and enhance the analysis of data, providing users with valuable insights and actionable intelligence. 
 
-The source code for my version of the bot is private for various reasons, however I recommend checking out the original bot at https://github.com/Kav-K/GPT3Discord
+The source code for my version of the bot is private, however I recommend checking out the original bot at https://github.com/Kav-K/GPT3Discord
+
+Eventaully there will be multiple AI bots that can interact with different models and accomplish different tasks.
 
 ## Roadmap
 
